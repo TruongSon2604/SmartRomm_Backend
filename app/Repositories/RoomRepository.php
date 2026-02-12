@@ -30,4 +30,12 @@ class RoomRepository implements RoomRepositoryInterface
     {
         return $room->delete();
     }
+
+    public function updateStatus(int $roomId, string $status): void
+    {
+        Room::where('id', $roomId)->update([
+            'status' => $status
+        ]);
+    }
+
 }

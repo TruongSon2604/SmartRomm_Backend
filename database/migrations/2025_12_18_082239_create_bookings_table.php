@@ -22,11 +22,10 @@ return new class extends Migration
             $table->dateTime('start_time');
             $table->dateTime('end_time');
             $table->enum('status', [
-                'pending',
-                'approved',
-                'rejected',
-                'canceled'
-            ])->default('pending');
+                'available',
+                'busy',
+                'maintenance'
+            ])->default('available');
 
             $table->text('note')->nullable();
             $table->timestamps();

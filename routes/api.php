@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\BookingController;
  
 Route::group([
     'middleware' => 'api',
@@ -23,3 +24,8 @@ Route::get('/user', function (Request $request) {
 
 
 Route::apiResource('rooms', RoomController::class);
+
+Route::middleware('auth:api')->group(function () {
+    Route::post('/bookings', [BookingController::class, 'store']);
+    Route::get('/bookings', [BookingController::class, 'index']);
+});
