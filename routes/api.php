@@ -28,4 +28,6 @@ Route::apiResource('rooms', RoomController::class);
 Route::middleware('auth:api')->group(function () {
     Route::post('/bookings', [BookingController::class, 'store']);
     Route::get('/bookings', [BookingController::class, 'index']);
+    Route::post('/bookings/{id}', [BookingController::class, 'update']);
+    Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
 });

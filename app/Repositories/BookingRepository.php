@@ -65,4 +65,10 @@ class BookingRepository implements BookingRepositoryInterface
             ->where('end_time', '>=', $now)
             ->exists();
     }
+    private function isInPast(Carbon $start, Carbon $end): bool
+    {
+        $now = Carbon::now();
+
+        return $start->lt($now) || $end->lt($now);
+    }
 }

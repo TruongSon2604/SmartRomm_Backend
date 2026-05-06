@@ -19,14 +19,25 @@ class BookingService
      */
     public function create(array $data)
     {
-        $start = Carbon::parse($data['start_time']);
-        $end   = Carbon::parse($data['end_time']);
-
+        // $start = Carbon::parse($data['start_time']);
+        // $end   = Carbon::parse($data['end_time']);
+        $start = Carbon::parse($data['start_time'], 'Asia/Ho_Chi_Minh');
+        $end   = Carbon::parse($data['end_time'], 'Asia/Ho_Chi_Minh');
+        $now   = Carbon::now('Asia/Ho_Chi_Minh');
+        
         if ($start >= $end) {
             throw ValidationException::withMessages([
                 'time' => 'End time must be after start time'
             ]);
         }
+        if ($start->isPast() || $end->isPast()) {
+
+                return response()->json([
+                'status' => 'error',
+                'code' => 'BOOKING_IN_PAST',
+                'message' => 'Cannot book a room in the past',
+            ], 422);
+            }
 
         Log::info('Creating booking 1');
         // Check conflict
@@ -35,9 +46,7 @@ class BookingService
             $start,
             $end
         )) {
-            // return throw ValidationException::withMessages([
-            //     'conflict' => 'Booking time conflicts with an existing booking'
-            // ]);
+   
             return response()->json([
                 'status' => 'error',
                 'message' => 'Booking time conflicts with an existing booking',
@@ -76,6 +85,15 @@ class BookingService
 
         $start = Carbon::parse($data['start_time']);
         $end   = Carbon::parse($data['end_time']);
+        $now   = Carbon::now();
+
+        if ($start->isPast() || $end->isPast()) {
+            return response()->json([
+                'status' => 'error',
+                'code' => 'BOOKING_IN_PAST',
+                'message' => 'Cannot update booking to a past time',
+            ], 422);
+        }
 
         if ($this->bookingRepo->hasConflict(
             $booking->room_id,
@@ -83,7 +101,12 @@ class BookingService
             $end,
             $booking->id
         )) {
-            throw new Exception('Trùng lịch đặt phòng');
+            // throw new Exception('Trùng lịch đặt phòng');
+            return response()->json([
+                'status' => 'error',
+                'code' => 'BOOKING_TIME_CONFLICT',
+                'message' => 'Booking time conflicts with an existing booking',
+            ], 422);
         }
 
         return $this->bookingRepo->update($booking, $data);

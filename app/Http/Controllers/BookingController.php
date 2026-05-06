@@ -58,7 +58,7 @@ class BookingController extends Controller
 
     public function destroy(int $id)
     {
-        $this->bookingService->cancel($id);
+        $this->bookingService->delete($id);
 
         return response()->json([
             'message' => 'Đã hủy booking'
